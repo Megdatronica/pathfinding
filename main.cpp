@@ -4,10 +4,17 @@
 //Include GLFW
 #include <GLFW/glfw3.h>
 
+//OpenGL maths library
+#include <glm/glm.hpp>
+
 //Include the standard C++ headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+//IO utilities
+#include "io.h"
+#include "main.h"
 
 //Declare a window object
 GLFWwindow* window;
@@ -19,25 +26,42 @@ static void error_callback(int error, const char* description)
 	_fgetchar();
 }
 
-//Define the key input callback
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-}
-
-static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+//Mouse button click callback
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 
 	//Print which button was pressed
 	printf("%d\n", button);
 
 	//Mouse position
-	double xpos, ypos = 0.0;
+	double xpos, ypos, x_ndc, y_ndc, wx, wy = 0.0;
 
 	// get current mouse pos
 	glfwGetCursorPos(window, &xpos, &ypos);
 
-	printf("%lf, %lf\n", xpos, ypos);
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	io::to_ndc(xpos, ypos, &x_ndc, &y_ndc, width, height);
+
+	io::GetWorldCoords(x_ndc, y_ndc, glm::translate(glm::vec3(10.0, 0.0, 0.0)), &wx, &wy);
+
+	// If the last click is not set, it takes the value (-INFINITY, -INFINITY)
+	// and so we test to see if the x value is -INFINITY.
+
+	if (io::get_last_click().x == -INFINITY) {
+
+		io::set_last_click(wx, wy);
+	}
+	else {
+		//Do path finding...
+	}
+}
+
+//Define the key input callback
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
 int main(void)
