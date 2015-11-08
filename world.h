@@ -12,7 +12,11 @@ public:
 
 	// Return a tile index from a position in the world in pixel terms
 	int toGrid(int x, int y);
-
+	
+	// Set the current object's path to the path between the two given world
+	// coordinates
+	void setPath(int fromX, int fromY, int toX, int toY);
+		
 private:
 
 	// A grid of tiles
@@ -21,6 +25,9 @@ private:
 	// Size of world in tiles
 	int xSize;
 	int ySize;
+
+	// Current path taken by an object in the world - an array of tiles
+	int * path;
 };
 
 #endif
