@@ -4,6 +4,8 @@
 
 namespace io
 {
+	//Initialise last_click to -INFINITY to indicate that we haven't got a past
+	//click stored.
 	glm::vec2 last_click = glm::vec2(-INFINITY, -INFINITY);
 
 	glm::vec2 get_last_click() {
@@ -16,9 +18,9 @@ namespace io
 		last_click = glm::vec2(wx, wy);
 	}
 
-	void GetWorldCoords(double x_ndc, double y_ndc, glm::mat4 translation, double* wx, double* wy) {
+	void GetWorldCoords(double x_ndc, double y_ndc, glm::mat4 VPmatrix, double* wx, double* wy) {
 
-		glm::mat4 inverse = glm::inverse(translation);
+		glm::mat4 inverse = glm::inverse(VPmatrix);
 
 		glm::vec4 pos_ndc = glm::vec4(x_ndc, y_ndc, 0.0, 1.0);
 

@@ -14,7 +14,6 @@
 
 //IO utilities
 #include "io.h"
-#include "main.h"
 
 //Declare a window object
 GLFWwindow* window;
@@ -43,7 +42,10 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 	io::to_ndc(xpos, ypos, &x_ndc, &y_ndc, width, height);
 
-	io::GetWorldCoords(x_ndc, y_ndc, glm::translate(glm::vec3(10.0, 0.0, 0.0)), &wx, &wy);
+	//Currently some arbitrary orthogonal projection and translation
+	glm::mat4 VPmatrix = glm::translate(glm::vec3(10.0, 0.0, 0.0))*glm::ortho(0.f, 700.f, 700.f, 0.f, 1.f, -1.f);
+
+	io::GetWorldCoords(x_ndc, y_ndc, VPmatrix, &wx, &wy);
 
 	// If the last click is not set, it takes the value (-INFINITY, -INFINITY)
 	// and so we test to see if the x value is -INFINITY.
