@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+//Declare a window object
+GLFWwindow* window;
+
 //Define an error callback
 static void error_callback(int error, const char* description)
 {
@@ -23,6 +26,22 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+
+	//Print which button was pressed
+	printf("%d\n", button);
+
+	//Mouse position
+	double xpos, ypos = 0.0;
+
+	// get current mouse pos
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	
+
+	printf("%lf, %lf\n", xpos, ypos);
+}
+
 int main(void)
 {
 	//Set the error callback
@@ -34,13 +53,10 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-
-	//Declare a window object
-	GLFWwindow* window;
-
 	//Create a window and create its OpenGL context
 	window = glfwCreateWindow(700, 700, "Test Window", NULL, NULL);
 
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	//If the window couldn't be created
 	if (!window)
