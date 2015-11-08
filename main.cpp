@@ -4,16 +4,59 @@
 //Include GLFW
 #include <GLFW/glfw3.h>
 
+//OpenGL maths library
+#include <glm/glm.hpp>
+
 //Include the standard C++ headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+//IO utilities
+#include "io.h"
+
+//Declare a window object
+GLFWwindow* window;
 
 //Define an error callback
 static void error_callback(int error, const char* description)
 {
 	fputs(description, stderr);
 	_fgetchar();
+}
+
+//Mouse button click callback
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+
+	//Print which button was pressed
+	printf("%d\n", button);
+
+	//Mouse position
+	double xpos, ypos, x_ndc, y_ndc, wx, wy = 0.0;
+
+	// get current mouse pos
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	io::to_ndc(xpos, ypos, &x_ndc, &y_ndc, width, height);
+
+	//Currently some arbitrary orthogonal projection and translation
+	glm::mat4 VPmatrix = glm::translate(glm::vec3(10.0, 0.0, 0.0))*glm::ortho(0.f, 700.f, 700.f, 0.f, 1.f, -1.f);
+
+	io::GetWorldCoords(x_ndc, y_ndc, VPmatrix, &wx, &wy);
+
+	// If the last click is not set, it takes the value (-INFINITY, -INFINITY)
+	// and so we test to see if the x value is -INFINITY.
+
+	if (io::get_last_click().x == -INFINITY) {
+
+		io::set_last_click(wx, wy);
+	}
+	else {
+		//Do path finding...
+	}
 }
 
 //Define the key input callback
@@ -34,13 +77,10 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-
-	//Declare a window object
-	GLFWwindow* window;
-
 	//Create a window and create its OpenGL context
 	window = glfwCreateWindow(700, 700, "Test Window", NULL, NULL);
 
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	//If the window couldn't be created
 	if (!window)
